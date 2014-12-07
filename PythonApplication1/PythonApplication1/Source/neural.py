@@ -70,7 +70,7 @@ class Neural(object):
         left = get_next_pos(pos)
         if not left:
             return False
-        if self.get_value(left) == value:
+        if self.get_value(left[0], left[1]) == value:
             pos[0], pos[1] = left[0], left[1]
             return True
         else:
@@ -84,7 +84,7 @@ class Neural(object):
             3: right-up
             4: right-down
         '''
-        value = self.get_value(pos)
+        value = self.get_value(x, y)
         if value == 0:
             return 0
         if direction == 1:
@@ -101,4 +101,4 @@ class Neural(object):
             next_get_pos_func = self._get_down_right_pos
         else:
             return 0
-        self._count(last_get_pos_func, next_get_pos_func, x, y, value)
+        return self._count(last_get_pos_func, next_get_pos_func, x, y, value)

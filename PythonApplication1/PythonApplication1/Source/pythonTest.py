@@ -1,5 +1,5 @@
 # encoding:utf-8
-from GameFlow import GameFlow
+from gameflow import GameFlow
 background_image_filename = r'Source\image\Go.jpg'
 black_image_filename = r'Source\image\Black.png'
 white_image_filename = r'Source\image\White.png'
@@ -37,13 +37,15 @@ while True:
             exit()
         elif event.type == MOUSEBUTTONDOWN:
             if event.button == 1:
-                flow.update(event.pos)
-                flow.draw(screen)
+                win = flow.update(event.pos)
                 mouse_cursor = flow.get_mouse_cursor()
+                if win:
+                    print '%s is winner!' % win
  
     screen.blit(background, (0,0))
     #将背景图画上去
  
+    flow.draw(screen)
     x, y = pygame.mouse.get_pos()
     #获得鼠标位置
     x-= mouse_cursor.get_width() / 2

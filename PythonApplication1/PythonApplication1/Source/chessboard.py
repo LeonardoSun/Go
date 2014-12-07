@@ -41,3 +41,4 @@ class Chessboard(object):
             return None,None
         px = LEFT + ix * GRID_INTERVAL
         py = TOP + iy * GRID_INTERVAL
+        return px, py
