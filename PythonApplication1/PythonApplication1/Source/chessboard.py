@@ -7,10 +7,19 @@ WIDTH = 19 * 18
 RIGHT = LEFT + WIDTH
 BOTTOM = TOP + WIDTH
 
+
+import pygame
+
+
 class Chessboard(object):
     """description of class"""
     def __init__(self):
-        #self.
+        self.font = pygame.font.SysFont("simsunnsimsun", 40)
+        self.reset_btn_surface = self.font.render(u'重置', True, (0,0,0), (155, 155, 155))
+        self.reset_btn_location = (10, 10)
+        
+
+    def reset(self):
         pass
 
     def _judge_range(self, x, y):
@@ -20,8 +29,16 @@ class Chessboard(object):
             return False
 
         return True
+    def draw(self, screen):
+        screen.blit(self.reset_btn_surface, self.reset_btn_location)
 
-    def get_index(self, x, y):
+    def in_range_reset_btn(self, px, py):
+        if 0 < px - self.reset_btn_location[0] < self.reset_btn_surface.get_width()\
+           and 0 < py - self.reset_btn_location[1] < self.reset_btn_surface.get_height():
+            return True
+        return False
+
+    def get_stone_index(self, x, y):
         if not self._judge_range(x, y):
             return None, None
         tx = x - LEFT

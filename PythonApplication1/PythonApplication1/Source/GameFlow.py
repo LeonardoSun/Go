@@ -11,6 +11,16 @@ class GameFlow(object):
         self.player = BLACK_PLAYER
         self.black_stone_img = black_stone_img
         self.white_stone_img = white_stone_img
+        self.winner = None
+        self.win_text_surface = None
+
+    def reset(self):
+        self.chessboard.reset()
+        self.neural.reset()
+        self.player = BLACK_PLAYER
+        self.winner = None
+        self.win_text_surface = None
+
     def _change_player(self):
         if self.player == BLACK_PLAYER:
             self.player = WHITE_PLAYER
@@ -20,7 +30,7 @@ class GameFlow(object):
             assert(false)
             self.player = BLACK_PLAYER
             
-    def _player_team(self):
+    def get_player_name(self):
         if self.player == BLACK_PLAYER:
             return 'Black'
         elif self.player == WHITE_PLAYER:
@@ -36,14 +46,25 @@ class GameFlow(object):
         
     def update(self, pos):
         px, py = pos
-        ix, iy = self.chessboard.get_index(px, py)
+        # update button
+        if self.chessboard.in_range_reset_btn(px, py):
+            # reset
+            self.reset()
+            return
+
+        # update go
+        if self.winner:
+            return
+        ix, iy = self.chessboard.get_stone_index(px, py)
         if ix is None or iy is None:
-            return None
+            return
         if self.neural.set_value(ix, iy, self.player):
-            self._change_player()
             if self._is_win(ix, iy):
-                return self._player_team()
-        return None
+                self.winner = self.player
+                msg = u'%s is winner!' % self.get_player_name()
+                self.win_text_surface = self.chessboard.font.render(msg, True, (0,0,0), (255, 255, 255))
+            self._change_player()
+        
 
     def _get_img(self, player):
         if player == BLACK_PLAYER:
@@ -61,7 +82,7 @@ class GameFlow(object):
         for w in range(self.neural.width):
             for h in range(self.neural.height):
                 value = self.neural.get_value(w,h)
-                if value == 0:
+                if not value:
                     continue
                 play_img = self._get_img(value)
                 x, y = self.chessboard.get_pos(w,h)
@@ -72,3 +93,5 @@ class GameFlow(object):
                 y-= play_img.get_height() / 2
                 #计算光标的左上角位置
                 screen.blit(play_img, (x, y))
+
+        self.chessboard.draw(screen)

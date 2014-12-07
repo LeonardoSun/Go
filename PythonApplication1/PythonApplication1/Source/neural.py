@@ -1,4 +1,4 @@
-﻿# encoding:utf-8
+# encoding:utf-8
 class Neural(object):
     """description of class"""
     def __init__(self, w, h):
@@ -7,6 +7,10 @@ class Neural(object):
         self.mat = []
         for i in range(w * h):
             self.mat.append(0)
+
+    def reset(self):
+        for i in range(self.width * self.height):
+            self.mat[i] = 0
 
     def set_value(self, x, y, value):
         t = self.mat[self.width * y + x]
@@ -17,6 +21,8 @@ class Neural(object):
             return False
 
     def get_value(self, x, y):
+        if x < 0 or x >= self.width or y < 0 or y >= self.height:
+            return None
         return self.mat[self.width * y + x]
 
     def _count(self, last_func, next_func, x, y, value):
@@ -51,22 +57,32 @@ class Neural(object):
 
     def _get_up_left_pos(self, pos):
         pos = self._get_left_pos(pos)
+        if pos is None:
+            return None
         return self._get_up_pos(pos)
 
     def _get_up_right_pos(self, pos):
         pos = self._get_right_pos(pos)
+        if pos is None:
+            return None
         return self._get_up_pos(pos)
 
     def _get_down_left_pos(self, pos):
         pos = self._get_left_pos(pos)
+        if pos is None:
+            return None
         return self._get_down_pos(pos)
 
     def _get_down_right_pos(self, pos):
         pos = self._get_right_pos(pos)
+        if pos is None:
+            return None
         return self._get_down_pos(pos)
 
     def _judge_next_connected(self, pos, value, get_next_pos):
         ''' 判断下一个是否连上了，如果连上了，将当前位置改为下一个的位置。'''
+        if not pos:
+            return False
         left = get_next_pos(pos)
         if not left:
             return False
@@ -85,7 +101,7 @@ class Neural(object):
             4: right-down
         '''
         value = self.get_value(x, y)
-        if value == 0:
+        if not value:
             return 0
         if direction == 1:
             last_get_pos_func = self._get_left_pos

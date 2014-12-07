@@ -27,6 +27,7 @@ white_stone = pygame.image.load(white_image_filename).convert_alpha()
 
 flow = GameFlow(black_stone, white_stone)
 mouse_cursor = flow.get_mouse_cursor()
+font = pygame.font.SysFont("simsunnsimsun", 40)
  
 while True:
 #游戏主循环
@@ -37,10 +38,10 @@ while True:
             exit()
         elif event.type == MOUSEBUTTONDOWN:
             if event.button == 1:
-                win = flow.update(event.pos)
+                flow.update(event.pos)
                 mouse_cursor = flow.get_mouse_cursor()
-                if win:
-                    print '%s is winner!' % win
+
+                    
  
     screen.blit(background, (0,0))
     #将背景图画上去
@@ -53,6 +54,9 @@ while True:
     #计算光标的左上角位置
     screen.blit(mouse_cursor, (x, y))
     #把光标画上去
+
+    if flow.winner:
+        screen.blit(flow.win_text_surface, (screen.get_width()/2 - flow.win_text_surface.get_width()/2, screen.get_height()/2 - flow.win_text_surface.get_height()/2))
  
     pygame.display.update()
     #刷新一下画面
