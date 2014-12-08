@@ -1,6 +1,8 @@
 # encoding:utf-8
-background_image_filename = 'Go.jpg'
-mouse_image_filename = 'Black.png'
+from gameflow import GameFlow
+background_image_filename = r'image/Go.jpg'
+black_image_filename = r'image/Black.png'
+white_image_filename = r'image/White.png'
 #指定图像文件名称
  
 import pygame
@@ -19,8 +21,13 @@ pygame.display.set_caption("Hello, World!")
 #设置窗口标题
  
 background = pygame.image.load(background_image_filename).convert()
-mouse_cursor = pygame.image.load(mouse_image_filename).convert_alpha()
+black_stone = pygame.image.load(black_image_filename).convert_alpha()
+white_stone = pygame.image.load(white_image_filename).convert_alpha()
 #加载并转换图像
+
+flow = GameFlow(black_stone, white_stone)
+mouse_cursor = flow.get_mouse_cursor()
+font = pygame.font.SysFont("simsunnsimsun", 40)
  
 while True:
 #游戏主循环
@@ -29,10 +36,17 @@ while True:
         if event.type == QUIT:
             #接收到退出事件后退出程序
             exit()
+        elif event.type == MOUSEBUTTONDOWN:
+            if event.button == 1:
+                flow.update(event.pos)
+                mouse_cursor = flow.get_mouse_cursor()
+
+                    
  
     screen.blit(background, (0,0))
     #将背景图画上去
  
+    flow.draw(screen)
     x, y = pygame.mouse.get_pos()
     #获得鼠标位置
     x-= mouse_cursor.get_width() / 2
@@ -40,6 +54,9 @@ while True:
     #计算光标的左上角位置
     screen.blit(mouse_cursor, (x, y))
     #把光标画上去
+
+    if flow.winner:
+        screen.blit(flow.win_text_surface, (screen.get_width()/2 - flow.win_text_surface.get_width()/2, screen.get_height()/2 - flow.win_text_surface.get_height()/2))
  
     pygame.display.update()
     #刷新一下画面
